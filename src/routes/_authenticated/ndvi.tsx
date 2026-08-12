@@ -84,8 +84,7 @@ function NdviPage() {
           <FarmMap
             center={{ lat: farm.latitude, lng: farm.longitude }}
             boundary={ringFromGeoJson(farm.polygon)}
-            ndviImage={latest?.ndvi_image_url ?? null}
-            ndviBounds={latest?.image_bounds ?? null}
+            ndvi={(latest?.grid as unknown as { imageDataUrl: string; bbox: [number, number, number, number] } | null) ?? null}
             className="h-[420px] w-full rounded-2xl"
           />
         </Suspense>

@@ -47,7 +47,10 @@ function AuthPage() {
       password: String(f.get("password")),
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     navigate({ to: "/dashboard" });
   };
 
@@ -69,19 +72,15 @@ function AuthPage() {
       },
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setLang(String(f.get("language")) === "ta" ? "ta" : "en");
     toast.success(lang === "ta" ? "கணக்கு உருவாக்கப்பட்டது" : "Account created");
     navigate({ to: "/farm/new" });
   };
 
-  const google = async () => {
-    const { lovable } = await import("@/integrations/lovable/index");
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) return toast.error("Google sign-in failed");
-    if (result.redirected) return;
-    navigate({ to: "/dashboard" });
-  };
 
   return (
     <div className="min-h-screen bg-secondary/40 px-4 py-8">
@@ -140,12 +139,6 @@ function AuthPage() {
           </TabsContent>
         </Tabs>
 
-        <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
-        </div>
-        <Button variant="outline" onClick={google} className="h-12 w-full font-bold">
-          Continue with Google
-        </Button>
       </div>
     </div>
   );

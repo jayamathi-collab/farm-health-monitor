@@ -88,14 +88,14 @@ function CropDoctor() {
         <section className="field-card space-y-3 p-5">
           {result.ok ? (
             <>
-              <h2 className="text-xl font-bold">{result.condition}</h2>
+              <h2 className="text-xl font-bold">{result.problem}</h2>
               <p className="text-sm text-muted-foreground">
                 {t("confidence")}: {Math.round((result.confidence ?? 0) * 100)}% · {t("severity")}: {result.severity ?? "—"}
               </p>
               {result.lowConfidence && <p className="rounded-xl bg-accent p-3 text-sm">{t("lowConfidence")}</p>}
               <Block title={t("symptoms")} items={result.symptoms ?? []} />
               <Block title={t("altCauses")} items={result.alternativeCauses ?? []} />
-              <Block title={t("nextSteps")} items={result.nextSteps ?? []} />
+              <Block title={t("nextSteps")} items={result.recommendations ?? []} />
             </>
           ) : (
             <p className="text-sm text-destructive">{result.message}</p>
