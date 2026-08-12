@@ -41,7 +41,7 @@ export const analyzeCropImage = createServerFn({ method: "POST" })
         .eq("id", data.farmId)
         .maybeSingle();
       if (f) {
-        farm = f as never;
+        farm = f;
         const { data: ndvi } = await supabase
           .from("ndvi_observations")
           .select("observed_on, mean_ndvi")
