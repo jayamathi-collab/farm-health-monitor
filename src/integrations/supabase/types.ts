@@ -363,18 +363,19 @@ export type Database = {
       }
     }
     Views: {
-      risk_zones: {
-        Row: {
-          crop: string | null
-          grid_lat: number | null
-          grid_lng: number | null
-          last_report: string | null
-          report_count: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
+      get_risk_zones: {
+        Args: never
+        Returns: {
+          crop: string
+          grid_lat: number
+          grid_lng: number
+          last_report: string
+          report_count: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
