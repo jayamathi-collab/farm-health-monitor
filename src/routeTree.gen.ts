@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedCropDoctorRouteImport } from './routes/_authenticated/crop-doctor'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedNdviRouteImport } from './routes/_authenticated/ndvi'
 import { Route as AuthenticatedFarmNewRouteImport } from './routes/_authenticated/farm.new'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,9 +31,19 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCropDoctorRoute = AuthenticatedCropDoctorRouteImport.update({
+  id: '/crop-doctor',
+  path: '/crop-doctor',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNdviRoute = AuthenticatedNdviRouteImport.update({
+  id: '/ndvi',
+  path: '/ndvi',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedFarmNewRoute = AuthenticatedFarmNewRouteImport.update({
@@ -43,13 +55,17 @@ const AuthenticatedFarmNewRoute = AuthenticatedFarmNewRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/crop-doctor': typeof AuthenticatedCropDoctorRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ndvi': typeof AuthenticatedNdviRoute
   '/farm/new': typeof AuthenticatedFarmNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/crop-doctor': typeof AuthenticatedCropDoctorRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ndvi': typeof AuthenticatedNdviRoute
   '/farm/new': typeof AuthenticatedFarmNewRoute
 }
 export interface FileRoutesById {
@@ -57,20 +73,25 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/crop-doctor': typeof AuthenticatedCropDoctorRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/ndvi': typeof AuthenticatedNdviRoute
   '/_authenticated/farm/new': typeof AuthenticatedFarmNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/farm/new'
+  fullPaths:
+    '/' | '/auth' | '/crop-doctor' | '/dashboard' | '/ndvi' | '/farm/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/farm/new'
+  to: '/' | '/auth' | '/crop-doctor' | '/dashboard' | '/ndvi' | '/farm/new'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/crop-doctor'
     | '/_authenticated/dashboard'
+    | '/_authenticated/ndvi'
     | '/_authenticated/farm/new'
   fileRoutesById: FileRoutesById
 }
@@ -103,11 +124,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/crop-doctor': {
+      id: '/_authenticated/crop-doctor'
+      path: '/crop-doctor'
+      fullPath: '/crop-doctor'
+      preLoaderRoute: typeof AuthenticatedCropDoctorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ndvi': {
+      id: '/_authenticated/ndvi'
+      path: '/ndvi'
+      fullPath: '/ndvi'
+      preLoaderRoute: typeof AuthenticatedNdviRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/farm/new': {
@@ -121,12 +156,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCropDoctorRoute: typeof AuthenticatedCropDoctorRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedNdviRoute: typeof AuthenticatedNdviRoute
   AuthenticatedFarmNewRoute: typeof AuthenticatedFarmNewRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCropDoctorRoute: AuthenticatedCropDoctorRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedNdviRoute: AuthenticatedNdviRoute,
   AuthenticatedFarmNewRoute: AuthenticatedFarmNewRoute,
 }
 
