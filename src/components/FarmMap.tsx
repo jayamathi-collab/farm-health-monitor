@@ -67,7 +67,7 @@ export default function FarmMap({
 
       const drawn = new L.FeatureGroup();
       map.addLayer(drawn);
-      layersRef.current.drawn = drawn;
+      layersRef.current['drawn'] = drawn;
 
       if (drawable) {
         const control = new (L as any).Control.Draw({
@@ -120,9 +120,9 @@ export default function FarmMap({
   useEffect(() => {
     if (!ready || !mapRef.current) return;
     const { L, map } = mapRef.current;
-    layersRef.current.marker?.remove();
+    layersRef.current['marker']?.remove();
     if (showMarker) {
-      layersRef.current.marker = L.circleMarker([center.lat, center.lng], {
+      layersRef.current['marker'] = L.circleMarker([center.lat, center.lng], {
         radius: 7,
         color: "#1565c0",
         fillColor: "#42a5f5",
@@ -134,13 +134,13 @@ export default function FarmMap({
   useEffect(() => {
     if (!ready || !mapRef.current) return;
     const { L, map } = mapRef.current;
-    layersRef.current.boundary?.remove();
+    layersRef.current['boundary']?.remove();
     if (boundary && boundary.length >= 3) {
       const poly = L.polygon(
         boundary.map((p) => [p.lat, p.lng]),
         { color: "#f5b400", weight: 3, fillOpacity: 0.05 },
       ).addTo(map);
-      layersRef.current.boundary = poly;
+      layersRef.current['boundary'] = poly;
       map.fitBounds(poly.getBounds(), { padding: [24, 24] });
     }
   }, [ready, boundary]);
@@ -148,10 +148,10 @@ export default function FarmMap({
   useEffect(() => {
     if (!ready || !mapRef.current) return;
     const { L, map } = mapRef.current;
-    layersRef.current.ndvi?.remove();
+    layersRef.current['ndvi']?.remove();
     if (ndvi?.imageDataUrl) {
       const [w, s, e, n] = ndvi.bbox;
-      layersRef.current.ndvi = L.imageOverlay(ndvi.imageDataUrl, [
+      layersRef.current['ndvi'] = L.imageOverlay(ndvi.imageDataUrl, [
         [s, w],
         [n, e],
       ], { opacity: 0.85 }).addTo(map);
@@ -161,8 +161,8 @@ export default function FarmMap({
   useEffect(() => {
     if (!ready || !mapRef.current) return;
     const { L, map } = mapRef.current;
-    (layersRef.current.zones as any[] | undefined)?.forEach((z) => z.remove());
-    layersRef.current.zones = (riskZones ?? []).map((z) =>
+    (layersRef.current['zones'] as any[] | undefined)?.forEach((z) => z.remove());
+    layersRef.current['zones'] = (riskZones ?? []).map((z) =>
       L.circle([z.grid_lat, z.grid_lng], {
         radius: 2500,
         color: "#c62828",
