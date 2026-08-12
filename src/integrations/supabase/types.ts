@@ -14,16 +14,377 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      alerts: {
+        Row: {
+          acknowledged: boolean
+          created_at: string
+          farm_id: string
+          id: string
+          level: string
+          message: string
+          reasons: string[] | null
+          sms_status: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          acknowledged?: boolean
+          created_at?: string
+          farm_id: string
+          id?: string
+          level: string
+          message: string
+          reasons?: string[] | null
+          sms_status?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          acknowledged?: boolean
+          created_at?: string
+          farm_id?: string
+          id?: string
+          level?: string
+          message?: string
+          reasons?: string[] | null
+          sms_status?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disease_reports: {
+        Row: {
+          category: string | null
+          created_at: string
+          crop: string
+          district: string | null
+          grid_lat: number
+          grid_lng: number
+          id: string
+          problem: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          crop: string
+          district?: string | null
+          grid_lat: number
+          grid_lng: number
+          id?: string
+          problem: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          crop?: string
+          district?: string | null
+          grid_lat?: number
+          grid_lng?: number
+          id?: string
+          problem?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      disease_scans: {
+        Row: {
+          alternative_causes: string[] | null
+          category: string | null
+          confidence: number | null
+          context_note: string | null
+          created_at: string
+          crop: string
+          farm_id: string | null
+          id: string
+          image_url: string | null
+          problem: string | null
+          raw: Json | null
+          recommendations: string[] | null
+          severity: string | null
+          symptoms: string[] | null
+          user_id: string
+        }
+        Insert: {
+          alternative_causes?: string[] | null
+          category?: string | null
+          confidence?: number | null
+          context_note?: string | null
+          created_at?: string
+          crop: string
+          farm_id?: string | null
+          id?: string
+          image_url?: string | null
+          problem?: string | null
+          raw?: Json | null
+          recommendations?: string[] | null
+          severity?: string | null
+          symptoms?: string[] | null
+          user_id: string
+        }
+        Update: {
+          alternative_causes?: string[] | null
+          category?: string | null
+          confidence?: number | null
+          context_note?: string | null
+          created_at?: string
+          crop?: string
+          farm_id?: string | null
+          id?: string
+          image_url?: string | null
+          problem?: string | null
+          raw?: Json | null
+          recommendations?: string[] | null
+          severity?: string | null
+          symptoms?: string[] | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disease_scans_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      farms: {
+        Row: {
+          area_hectares: number
+          created_at: string
+          crop: string
+          crop_variety: string | null
+          district: string | null
+          id: string
+          is_demo: boolean
+          latitude: number
+          longitude: number
+          name: string
+          polygon: Json
+          sowing_date: string | null
+          user_id: string
+        }
+        Insert: {
+          area_hectares?: number
+          created_at?: string
+          crop: string
+          crop_variety?: string | null
+          district?: string | null
+          id?: string
+          is_demo?: boolean
+          latitude: number
+          longitude: number
+          name: string
+          polygon: Json
+          sowing_date?: string | null
+          user_id: string
+        }
+        Update: {
+          area_hectares?: number
+          created_at?: string
+          crop?: string
+          crop_variety?: string | null
+          district?: string | null
+          id?: string
+          is_demo?: boolean
+          latitude?: number
+          longitude?: number
+          name?: string
+          polygon?: Json
+          sowing_date?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ndvi_observations: {
+        Row: {
+          cloud_cover_pct: number | null
+          created_at: string
+          farm_id: string
+          grid: Json | null
+          healthy_pct: number | null
+          id: string
+          max_ndvi: number | null
+          mean_ndvi: number | null
+          min_ndvi: number | null
+          observed_on: string
+          source: string
+          stressed_pct: number | null
+          user_id: string
+        }
+        Insert: {
+          cloud_cover_pct?: number | null
+          created_at?: string
+          farm_id: string
+          grid?: Json | null
+          healthy_pct?: number | null
+          id?: string
+          max_ndvi?: number | null
+          mean_ndvi?: number | null
+          min_ndvi?: number | null
+          observed_on: string
+          source?: string
+          stressed_pct?: number | null
+          user_id: string
+        }
+        Update: {
+          cloud_cover_pct?: number | null
+          created_at?: string
+          farm_id?: string
+          grid?: Json | null
+          healthy_pct?: number | null
+          id?: string
+          max_ndvi?: number | null
+          mean_ndvi?: number | null
+          min_ndvi?: number | null
+          observed_on?: string
+          source?: string
+          stressed_pct?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ndvi_observations_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          district: string | null
+          full_name: string
+          id: string
+          language: string
+          mobile: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          district?: string | null
+          full_name?: string
+          id: string
+          language?: string
+          mobile?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          district?: string | null
+          full_name?: string
+          id?: string
+          language?: string
+          mobile?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      weather_observations: {
+        Row: {
+          condition: string | null
+          farm_id: string
+          humidity_pct: number | null
+          id: string
+          rain_probability_pct: number | null
+          rainfall_mm: number | null
+          recorded_at: string
+          source: string
+          temperature_c: number | null
+          user_id: string
+          wind_kph: number | null
+        }
+        Insert: {
+          condition?: string | null
+          farm_id: string
+          humidity_pct?: number | null
+          id?: string
+          rain_probability_pct?: number | null
+          rainfall_mm?: number | null
+          recorded_at?: string
+          source?: string
+          temperature_c?: number | null
+          user_id: string
+          wind_kph?: number | null
+        }
+        Update: {
+          condition?: string | null
+          farm_id?: string
+          humidity_pct?: number | null
+          id?: string
+          rain_probability_pct?: number | null
+          rainfall_mm?: number | null
+          recorded_at?: string
+          source?: string
+          temperature_c?: number | null
+          user_id?: string
+          wind_kph?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weather_observations_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      risk_zones: {
+        Row: {
+          crop: string | null
+          grid_lat: number | null
+          grid_lng: number | null
+          last_report: string | null
+          report_count: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "farmer" | "expert" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +511,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["farmer", "expert", "admin"],
+    },
   },
 } as const
