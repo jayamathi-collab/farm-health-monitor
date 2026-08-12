@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/crop-doctor")({
       { property: "og:description", content: "Leaf photo analysis with symptoms, alternative causes and next steps." },
     ],
   }),
-  component: CropDoctor;
+  component: CropDoctor,
 });
 
 type Result = Awaited<ReturnType<typeof analyzeCropImage>>;
