@@ -39,7 +39,7 @@ function WeatherPage() {
       </h1>
 
       {q.isLoading && <p className="text-muted-foreground">Loading…</p>}
-      {q.data?.ok === false && <p className="text-sm text-destructive">{q.data.message}</p>}
+      {q.data?.ok === false && <p className="text-sm text-destructive">Weather data is temporarily unavailable.</p>}
 
       {q.data?.ok && q.data.current && (
         <>
@@ -48,11 +48,11 @@ function WeatherPage() {
             <Stat label="Humidity" value={`${Math.round(q.data.current.humidity_pct)} %`} />
             <Stat label="Rain (24h)" value={`${q.data.current.rainfall_mm.toFixed(1)} mm`} />
           </div>
-          {q.data.warnings.length > 0 && (
+          {(q.data.warnings ?? []).length > 0 && (
             <section className="field-card p-5">
               <h2 className="text-lg font-bold">Warnings</h2>
               <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-                {q.data.warnings.map((w) => (
+                {(q.data.warnings ?? []).map((w) => (
                   <li key={w.en}>{lang === "ta" ? w.ta : w.en}</li>
                 ))}
               </ul>
