@@ -52,7 +52,7 @@ export const evaluateFarmHealth = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { assessFarmHealth, alertCopy } = await import("./alerts.server");
 
-    const [{ data: ndvi }, { data: wx }, { data: scans }, { data: farm }] = await Promise.all([
+    const [{ data: ndvi }, { data: wx }, { data: scans }, { data: farm }, { data: soilObs }] = await Promise.all([
       supabase
         .from("ndvi_observations")
         .select("observed_on, mean_ndvi")
@@ -71,14 +71,34 @@ export const evaluateFarmHealth = createServerFn({ method: "POST" })
         .eq("farm_id", data.farmId)
         .order("created_at", { ascending: false })
         .limit(1),
-      supabase.from("farms").select("id, name").eq("id", data.farmId).maybeSingle(),
+      supabase.from("farms").select("id, name, soil_type, sowing_date").eq("id", data.farmId).maybeSingle(),
+      supabase
+        .from("soil_observations")
+        .select("source, moisture_pct, moisture_label")
+        .eq("farm_id", data.farmId)
+        .order("recorded_at", { ascending: false })
+        .limit(1),
     ]);
+
+    const { growthStage } = await import("./soil.server");
+    const obs = soilObs?.[0];
 
     const verdict = assessFarmHealth({
       ndvi: ndvi ?? [],
       weather: wx?.[0] ?? null,
       latestScan: scans?.[0] ?? null,
+      soil: obs
+        ? {
+            type: farm?.soil_type ?? null,
+            moistureLabel: (obs.moisture_label as "dry" | "normal" | "wet" | null) ?? null,
+            moisturePct: obs.moisture_pct ?? null,
+            moistureSource:
+              obs.source === "sensor" ? "sensor measured" : obs.source === "manual" ? "farmer entered" : "satellite/API estimate",
+          }
+        : { type: farm?.soil_type ?? null },
+      cropStage: growthStage(farm?.sowing_date).stage,
     });
+
 
     let alertId: string | null = null;
     if (data.createAlert && farm && verdict.level !== "normal") {

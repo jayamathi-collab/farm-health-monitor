@@ -84,7 +84,36 @@ const dict = {
   demoData: { en: "DEMO DATA — NOT REAL SATELLITE OBSERVATION", ta: "டெமோ தரவு — உண்மையான செயற்கைக்கோள் அவதானிப்பு அல்ல" },
   smsAlerts: { en: "SMS alerts", ta: "SMS எச்சரிக்கைகள்" },
   sendTestSms: { en: "Send alert by SMS", ta: "SMS மூலம் எச்சரிக்கை அனுப்பு" },
+  captureCropImage: { en: "Capture Crop Image", ta: "பயிர் படத்தை எடு" },
+  openCamera: { en: "Open camera", ta: "கேமராவை திற" },
+  retake: { en: "Retake photo", ta: "மீண்டும் எடு" },
+  switchCamera: { en: "Switch camera", ta: "கேமராவை மாற்று" },
+  chooseFromGallery: { en: "Choose from gallery instead", ta: "கேலரியிலிருந்து தேர்ந்தெடு" },
+  cameraPermission: {
+    en: "Camera permission is needed to take a crop photo. Please allow camera access, or choose a photo from your gallery.",
+    ta: "பயிர் படம் எடுக்க கேமரா அனுமதி தேவை. கேமரா அணுகலை அனுமதிக்கவும் அல்லது கேலரியிலிருந்து படத்தை தேர்ந்தெடுக்கவும்.",
+  },
+  soilInformation: { en: "Soil information", ta: "மண் தகவல்" },
+  soilType: { en: "Soil type", ta: "மண் வகை" },
+  soilMoisture: { en: "Soil moisture", ta: "மண் ஈரப்பதம்" },
+  airHumidity: { en: "Air humidity", ta: "காற்று ஈரப்பதம்" },
+  soilPh: { en: "Soil pH", ta: "மண் pH" },
+  dataSource: { en: "Source", ta: "தரவு ஆதாரம்" },
+  dry: { en: "Dry", ta: "வறண்டது" },
+  normalMoisture: { en: "Normal", ta: "சாதாரணம்" },
+  wet: { en: "Wet", ta: "ஈரம்" },
+  soilUnavailable: { en: "Soil data unavailable for this location.", ta: "இந்த இடத்திற்கு மண் தரவு கிடைக்கவில்லை." },
+  moistureUnavailable: { en: "Real-time soil moisture unavailable.", ta: "நேரடி மண் ஈரப்பத தரவு கிடைக்கவில்லை." },
+  enterManually: { en: "Enter manually", ta: "கைமுறையாக உள்ளிடு" },
+  save: { en: "Save", ta: "சேமி" },
+  soilEstimateNote: {
+    en: "Soil type is estimated from your farm's location using global soil maps. It is not a laboratory soil test.",
+    ta: "மண் வகை உங்கள் வயலின் இருப்பிடத்திலிருந்து உலகளாவிய மண் வரைபடங்கள் மூலம் மதிப்பிடப்பட்டது. இது ஆய்வக சோதனை அல்ல.",
+  },
+  lowCostActions: { en: "Low-cost actions first", ta: "முதலில் குறைந்த செலவு நடவடிக்கைகள்" },
+  noCost: { en: "No cost", ta: "செலவு இல்லை" },
 } as const;
+
 
 export type TKey = keyof typeof dict;
 

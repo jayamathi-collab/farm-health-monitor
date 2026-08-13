@@ -2,12 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Stethoscope, Upload } from "lucide-react";
+import { Stethoscope } from "lucide-react";
 import { usePrimaryFarm } from "@/hooks/useFarms";
 import { analyzeCropImage } from "@/lib/disease.functions";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { EmptyFarm } from "@/components/farm-widgets";
+import { CameraCapture } from "@/components/CameraCapture";
 
 export const Route = createFileRoute("/_authenticated/crop-doctor")({
   head: () => ({
@@ -24,28 +25,31 @@ export const Route = createFileRoute("/_authenticated/crop-doctor")({
 type Result = Awaited<ReturnType<typeof analyzeCropImage>>;
 
 function CropDoctor() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { farm, isLoading } = usePrimaryFarm();
   const analyze = useServerFn(analyzeCropImage);
   const [preview, setPreview] = useState<string | null>(null);
+  const [capturedAt, setCapturedAt] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
 
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>;
   if (!farm) return <EmptyFarm />;
 
-  const onFile = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => setPreview(String(reader.result));
-    reader.readAsDataURL(file);
-  };
-
   const run = async () => {
     if (!preview) return;
     setBusy(true);
     setResult(null);
     try {
-      const res = await analyze({ data: { farmId: farm.id, imageDataUrl: preview } });
+      const res = await analyze({
+        data: {
+          farmId: farm.id,
+          crop: farm.crop,
+          imageDataUrl: preview,
+          capturedAt: capturedAt ?? new Date().toISOString(),
+          language: lang,
+        },
+      });
       setResult(res);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Analysis failed");
@@ -60,29 +64,28 @@ function CropDoctor() {
         <h1 className="flex items-center gap-2 text-2xl font-extrabold">
           <Stethoscope className="size-6" /> {t("cropDoctor")}
         </h1>
-        <p className="text-muted-foreground">{t("uploadLeaf")}</p>
+        <p className="text-muted-foreground">{t("captureCropImage")}</p>
       </header>
 
       <section className="field-card space-y-4 p-5">
-        <label className="flex h-44 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border text-muted-foreground">
-          <Upload className="size-7" />
-          <span className="text-sm font-semibold">{t("uploadLeaf")}</span>
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="sr-only"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) onFile(f);
-            }}
-          />
-        </label>
-        {preview && <img src={preview} alt="Selected crop leaf" className="max-h-72 w-full rounded-2xl object-contain" />}
+        <CameraCapture
+          preview={preview}
+          onClear={() => {
+            setPreview(null);
+            setCapturedAt(null);
+            setResult(null);
+          }}
+          onCapture={(dataUrl, at) => {
+            setPreview(dataUrl);
+            setCapturedAt(at);
+            setResult(null);
+          }}
+        />
         <Button onClick={run} disabled={!preview || busy} className="h-12 w-full font-bold">
           {busy ? "…" : t("analyze")}
         </Button>
       </section>
+
 
       {result && (
         <section className="field-card space-y-3 p-5">

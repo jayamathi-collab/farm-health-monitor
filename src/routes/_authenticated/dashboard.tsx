@@ -10,6 +10,7 @@ import { ringFromGeoJson, ndviBand } from "@/lib/geo";
 import { Button } from "@/components/ui/button";
 import { HealthPill, NdviValue, EmptyFarm } from "@/components/farm-widgets";
 import { VoiceAssistant } from "@/components/VoiceAssistant";
+import { SoilCard } from "@/components/SoilCard";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -116,6 +117,11 @@ function Dashboard() {
         <Tile Icon={Siren} label={t("alerts")} value={String(active.length)} sub={active[0]?.title ?? "No active alerts"} />
       </div>
 
+      <SoilCard
+        farmId={farm.id}
+        airHumidity={weather.data?.ok && weather.data.current ? weather.data.current.humidity_pct : null}
+      />
+
       {health.data && (
         <section className="field-card p-5">
           <h2 className="text-lg font-bold">Why this status?</h2>
@@ -124,8 +130,24 @@ function Dashboard() {
               <li key={r}>{r}</li>
             ))}
           </ul>
+          {health.data.recommendations?.length > 0 && (
+            <>
+              <h3 className="mt-4 font-bold">{t("lowCostActions")}</h3>
+              <ul className="mt-2 space-y-1 pl-5 text-sm text-muted-foreground">
+                {health.data.recommendations.map((r) => (
+                  <li key={r.en} className="list-disc">
+                    {lang === "ta" ? r.ta : r.en}{" "}
+                    <span className="font-semibold text-foreground">
+                      ({r.costInr === 0 ? t("noCost") : `₹${r.costInr}`})
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </section>
       )}
+
 
       <section className="field-card overflow-hidden p-5">
         <h2 className="mb-3 text-lg font-bold">{t("myFarm")}</h2>
