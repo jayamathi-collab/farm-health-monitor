@@ -4,8 +4,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const inputSchema = z.object({
   farmId: z.string().uuid().nullable().optional(),
-  crop: z.string().min(1).max(60),
-  imageBase64: z.string().min(100).max(8_000_000),
+  crop: z.string().min(1).max(60).optional(),
+  imageDataUrl: z.string().min(100).max(8_000_000),
+  capturedAt: z.string().max(40).optional(),
   language: z.enum(["en", "ta"]).default("en"),
 });
 
@@ -32,16 +33,20 @@ export const analyzeCropImage = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { buildDiseasePrompt, runDiseaseModel } = await import("./disease.server");
 
+    const { growthStage } = await import("./soil.server");
+
     let ctx = "";
+    let cropName = data.crop ?? "";
     let farm: { id: string; crop: string; district: string | null; sowing_date: string | null } | null = null;
     if (data.farmId) {
       const { data: f } = await supabase
         .from("farms")
-        .select("id, crop, district, sowing_date, latitude, longitude")
+        .select("id, name, crop, crop_variety, district, sowing_date, latitude, longitude, area_hectares, soil_type, soil_type_source, soil_ph")
         .eq("id", data.farmId)
         .maybeSingle();
       if (f) {
         farm = f;
+        if (!cropName) cropName = f.crop;
         const { data: ndvi } = await supabase
           .from("ndvi_observations")
           .select("observed_on, mean_ndvi")
@@ -54,7 +59,27 @@ export const analyzeCropImage = createServerFn({ method: "POST" })
           .eq("farm_id", f.id)
           .order("recorded_at", { ascending: false })
           .limit(1);
-        const parts: string[] = [`District: ${f.district ?? "unknown"}`, `Sowing date: ${f.sowing_date ?? "unknown"}`];
+        const { data: soil } = await supabase
+          .from("soil_observations")
+          .select("source, moisture_pct, moisture_label, recorded_at")
+          .eq("farm_id", f.id)
+          .order("recorded_at", { ascending: false })
+          .limit(1);
+        const stage = growthStage(f.sowing_date);
+        const parts: string[] = [
+          `Farm: ${f.name} (${f.area_hectares} ha)`,
+          `Crop: ${f.crop}${f.crop_variety ? ` (variety ${f.crop_variety})` : ""}`,
+          `District: ${f.district ?? "unknown"}`,
+          `GPS: ${f.latitude}, ${f.longitude}`,
+          `Sowing date: ${f.sowing_date ?? "unknown"}`,
+          `Crop age: ${stage.days != null ? `${stage.days} days` : "unknown"} — growth stage: ${stage.stage}`,
+          `Soil type: ${f.soil_type ? `${f.soil_type} (${f.soil_type_source === "manual" ? "farmer entered" : "mapped from location, estimated"})` : "unavailable"}`,
+          `Soil pH: ${f.soil_ph ?? "unavailable"}`,
+          soil?.[0]
+            ? `Soil moisture: ${soil[0].moisture_label ?? "unknown"}${soil[0].moisture_pct != null ? ` (${soil[0].moisture_pct}%)` : ""} — source: ${soil[0].source === "api" ? "satellite/API estimate" : soil[0].source === "sensor" ? "sensor measured" : "farmer entered"}`
+            : "Soil moisture: unavailable",
+          `Camera capture time: ${data.capturedAt ?? new Date().toISOString()}`,
+        ];
         if (ndvi?.length)
           parts.push(
             `Recent NDVI observations (newest first): ${ndvi
@@ -71,7 +96,8 @@ export const analyzeCropImage = createServerFn({ method: "POST" })
       }
     }
 
-    const result = await runDiseaseModel(buildDiseasePrompt(data.crop, ctx, data.language), data.imageBase64);
+    if (!cropName) cropName = "unknown crop";
+    const result = await runDiseaseModel(buildDiseasePrompt(cropName, ctx, data.language), data.imageDataUrl);
     if (!result.ok) return result;
 
     const { data: inserted } = await supabase
@@ -79,7 +105,7 @@ export const analyzeCropImage = createServerFn({ method: "POST" })
       .insert({
         farm_id: farm?.id ?? null,
         user_id: userId,
-        crop: data.crop,
+        crop: cropName,
         category: result.category,
         problem: result.problem,
         confidence: result.confidence,
@@ -102,7 +128,7 @@ export const analyzeCropImage = createServerFn({ method: "POST" })
       if (f2) {
         await supabase.from("disease_reports").insert({
           user_id: userId,
-          crop: data.crop,
+          crop: cropName,
           problem: result.problem,
           category: result.category,
           district: f2.district,

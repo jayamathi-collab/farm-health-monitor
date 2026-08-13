@@ -172,6 +172,10 @@ export type Database = {
           longitude: number
           name: string
           polygon: Json
+          soil_nutrients: Json | null
+          soil_ph: number | null
+          soil_type: string | null
+          soil_type_source: string | null
           sowing_date: string | null
           user_id: string
         }
@@ -187,6 +191,10 @@ export type Database = {
           longitude: number
           name: string
           polygon: Json
+          soil_nutrients?: Json | null
+          soil_ph?: number | null
+          soil_type?: string | null
+          soil_type_source?: string | null
           sowing_date?: string | null
           user_id: string
         }
@@ -202,6 +210,10 @@ export type Database = {
           longitude?: number
           name?: string
           polygon?: Json
+          soil_nutrients?: Json | null
+          soil_ph?: number | null
+          soil_type?: string | null
+          soil_type_source?: string | null
           sowing_date?: string | null
           user_id?: string
         }
@@ -292,6 +304,53 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      soil_observations: {
+        Row: {
+          created_at: string
+          depth_cm: string | null
+          farm_id: string
+          id: string
+          moisture_label: string | null
+          moisture_pct: number | null
+          provider: string | null
+          recorded_at: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          depth_cm?: string | null
+          farm_id: string
+          id?: string
+          moisture_label?: string | null
+          moisture_pct?: number | null
+          provider?: string | null
+          recorded_at?: string
+          source: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          depth_cm?: string | null
+          farm_id?: string
+          id?: string
+          moisture_label?: string | null
+          moisture_pct?: number | null
+          provider?: string | null
+          recorded_at?: string
+          source?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "soil_observations_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
