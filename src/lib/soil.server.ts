@@ -57,7 +57,7 @@ export async function fetchSoilType(lat: number, lng: number): Promise<SoilTypeI
     sourceLabel: "Mapped from location (SoilGrids)",
   });
   try {
-    const res = await fetch(url, { headers: { accept: "application/json" } });
+    const res = await fetch(url, { headers: { accept: "application/json" }, signal: AbortSignal.timeout(12000) });
     if (res.status === 429 || res.status === 503) return fail("Soil map service is busy. Please try again shortly.");
     if (!res.ok) return fail(`Soil map service returned ${res.status}`);
     const j = (await res.json()) as any;
@@ -102,7 +102,7 @@ export async function fetchSoilMoisture(lat: number, lng: number): Promise<SoilM
     sourceLabel: "Satellite/model estimate (Open-Meteo)",
   });
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
     if (!res.ok) return fail(`Soil moisture service returned ${res.status}`);
     const j = (await res.json()) as any;
     const times: string[] = j?.hourly?.time ?? [];
